@@ -12,26 +12,11 @@ int main() {
 
     do {
         int size{0}, l, b, p;
-        char parr[50], ff[100], c;
+        char parr[50], ff[100];
 
         sportsmanarr array = nullptr;
 
-        std::cout << "Хотите загрузить бинарный файл?(y/n): ";
-        std::cin >> c;
-
-        while(std::cin.peek() != '\n' || c != 'y' && c != 'Y' && c != 'n' && c != 'N') {
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-            std::cout << "Неверный ввод, введите y/n: ";
-            std::cin >> c;
-        }
-
-        if (c == 'y' || c == 'Y') {
-            std::cout << "Введите имя файла: ";
-            std::cin.ignore(10000, '\n');
-            std::cin >> ff;
-            loadFile(array, size, l, ff);
-        }else choiceAdd(array, l, b, p, parr);
+        choiceAdd(array, l, b, p, parr);
 
         int vyb;
 
@@ -41,7 +26,7 @@ int main() {
             std::cin >> vyb;
 
             switch (vyb) {
-                case 1: add(array, size, l, b, p, parr, c); break;
+                case 1: add(array, size, l, b, p, parr); break;
                 case 2: view(array, size); break;
                 case 3: {
                     fillOther(array, size);
@@ -76,10 +61,49 @@ int main() {
                     saveFile(array, size, file);
                     break;
                 }
-                case 9: break;
+                case 9: {
+                    char file[100];
+                    std::cout << "Введите имя файла для обновления: ";
+                    std::cin >> file;
+                    int n;
+                    std::cout << "Введите номер структуры для обновления: ";
+                    std::cin >> n;
+
+                    while (std::cin.peek() != '\n' || std::cin.fail() || n <= 0) {
+                        std::cin.clear();
+                        std::cin.ignore(10000, '\n');
+                        std::cout << "Неверный ввод. Введите число больше 0: ";
+                        std::cin >> n;
+                    }
+
+                    updateFile(file, n);
+                    break;
+                }
+                case 10: {
+                    char file[100];
+                    std::cout << "Введите имя файла для удаления: ";
+                    std::cin >> file;
+                    deleteFile(file);
+                    break;
+                }
+                case 11: {
+                    char file[100];
+                    std::cout << "Введите имя файла для добавления: ";
+                    std::cin >> file;
+                    addFile(file);
+                    break;
+                }
+                case 12: {
+                    char file[100];
+                    std::cout << "Введите имя файла для просмотра: ";
+                    std::cin >> file;
+                    viewFile(file);
+                    break;
+                }
+                case 0: break;
                 default: std::cout << "Неверный ввод.\n";
             }
-        } while (vyb != 9);
+        } while (vyb != 0);
 
         free(array);
 

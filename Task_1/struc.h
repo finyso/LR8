@@ -1,7 +1,7 @@
 #ifndef STRUC_H
 #define STRUC_H
 
-struct sportsman {
+typedef struct{
     bool isDouble;
     char country[40];
     char team[30];
@@ -13,8 +13,6 @@ struct sportsman {
         int i;
         double d;
     } weight;
-};
+}sportsman;
 
-typedef sportsman* sportsmanarr;
-
-#endif //STRUC_H
+#endif

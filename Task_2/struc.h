@@ -3,7 +3,7 @@
 
 #include <string>
 
-struct employee {
+typedef struct {
     std::string name;
     std::string job;
     bool isDouble;
@@ -14,8 +14,6 @@ struct employee {
         int i;
         double d;
     } number;
-};
+}employee;
 
-typedef employee* employeearr;
-
-#endif //STRUC_H
+#endif

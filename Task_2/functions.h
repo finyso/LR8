@@ -2,6 +2,7 @@
 #define HEADER_H
 
 #include "struc.h"
+#include "typedf.h"
 #include <iostream>
 
 void menu();
@@ -17,4 +18,4 @@ void sort(employeearr, int);
 void loadFile(employeearr&, int&, int&);
 void saveFile(employeearr, int);
 
-#endif //HEADER_H
+#endif

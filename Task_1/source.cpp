@@ -6,10 +6,10 @@
 #include "struc.h"
 
 void menu() {
-    std::cout << "--------------------------\n";
+    std::cout << std::string(50, '-') << '\n';
     std::cout << "Участники спортивных соревнований\n";
     std::cout << "Выполнил: Финский Павел Владимирович, гр.453502\n";
-    std::cout << "--------------------------\n";
+    std::cout << std::string(50, '-') << '\n';
 }
 
 char chinazes() {
@@ -28,6 +28,7 @@ char chinazes() {
 }
 
 void action() {
+    std::cout << std::string(50, '-') << '\n';
     std::cout << "Меню:\n";
     std::cout << "1. Добавить спортсмена\n";
     std::cout << "2. Просмотреть спортсмена\n";
@@ -37,7 +38,12 @@ void action() {
     std::cout << "6. Изменить спортсмена\n";
     std::cout << "7. Сортировать спортсменов по возрасту\n";
     std::cout << "8. Сохранить массив в файл\n";
-    std::cout << "9. Выйти\n";
+    std::cout << "9. Обновить запись в файле\n";
+    std::cout << "10. Удалить запись в файле\n";
+    std::cout << "11. Добавить запись в файл\n";
+    std::cout << "12. Просмотреть файл\n";
+    std::cout << "0. Выйти\n";
+    std::cout << std::string(50, '-') << '\n';
     std::cout << "Ваш выбор: ";
 }
 
@@ -96,7 +102,7 @@ void choiceAdd(sportsmanarr& array, int& l, int& b, int& p, char* parr) {
     }
 }
 
-void add(sportsmanarr& array, int& size, int& l, int& b, int& p, char* parr, char c) {
+void add(sportsmanarr& array, int& size, int& l, int& b, int& p, char* parr) {
     if (size >= l) {
         int n;
         std::cout << "Больше места нету. Сколько ещё структур хотите добавить?: ";
@@ -128,8 +134,10 @@ void add(sportsmanarr& array, int& size, int& l, int& b, int& p, char* parr, cha
 
     sportsman s{};
     std::cout << "Введите страну: ";
+    std::cin.ignore(10000, '\n');
     std::cin >> s.country;
     std::cout << "Введите команду: ";
+    std::cin.ignore(10000, '\n');
     std::cin >> s.team;
     std::cout << "Введите имя: ";
     std::cin.ignore(10000, '\n');
@@ -155,7 +163,7 @@ void add(sportsmanarr& array, int& size, int& l, int& b, int& p, char* parr, cha
 
     array[size++] = s;
 
-    if (b == 0 && (c == 'n' || c == 'N')) {
+    if (b == 0) {
         bool match = false;
         switch (p) {
             case 1: match = strcmp(s.country, parr) == 0; break;
@@ -386,7 +394,7 @@ void sortAge(sportsmanarr array, int size) {
     }
 }
 
-void loadFile(sportsmanarr& array, int& size, int& l, const char* file) {
+void loadFile(sportsmanarr& array, int& size, const char* file) {
     std::ifstream inFile(file, std::ios::binary);
     if (!inFile) {
         std::cout << "Ошибка открытия файла для чтения.\n";
@@ -394,16 +402,16 @@ void loadFile(sportsmanarr& array, int& size, int& l, const char* file) {
     }
 
     inFile.seekg(0, std::ios::end);
-    l = inFile.tellg() / sizeof(sportsman);
+    size = inFile.tellg() / sizeof(sportsman);
     inFile.seekg(0, std::ios::beg);
 
-    array = (sportsmanarr)malloc(l * sizeof(sportsman));
+    array = (sportsmanarr)malloc(size * sizeof(sportsman));
     if (!array) {
         std::cout << "Ошибка выделения памяти.\n";
         exit(1);
     }
 
-    inFile.read(reinterpret_cast<char*>(array), l * sizeof(sportsman));
+    inFile.read(reinterpret_cast<char*>(array), size * sizeof(sportsman));
     if (!inFile) {
         std::cout << "Ошибка чтения из файла.\n";
     } else {
@@ -411,8 +419,6 @@ void loadFile(sportsmanarr& array, int& size, int& l, const char* file) {
     }
 
     inFile.close();
-
-    size = l;
 }
 
 void saveFile(sportsmanarr array, int size, const char* file) {
@@ -430,4 +436,180 @@ void saveFile(sportsmanarr array, int size, const char* file) {
     }
 
     outFile.close();
+}
+
+void updateFile(const char* filename, int n) {
+    std::fstream file(filename, std::ios::binary | std::ios::in | std::ios::out);
+    if (!file) {
+        std::cout << "Ошибка открытия файла для чтения и записи.\n";
+        return;
+    }
+
+    sportsman updated;
+    std::cout << "Введите новую информацию для структуры №" << n << ":\n";
+
+    std::cout << "Введите страну: ";
+    std::cin >> updated.country;
+    std::cout << "Введите команду: ";
+    std::cin >> updated.team;
+    std::cout << "Введите имя: ";
+    std::cin.ignore(10000, '\n');
+    std::cin.getline(updated.name, sizeof(updated.name));
+    std::cout << "Введите номер: ";
+    std::cin >> updated.number;
+    std::cout << "Введите возраст: ";
+    std::cin >> updated.age;
+    std::cout << "Введите рост (см): ";
+    std::cin >> updated.height;
+    std::cout << "Введите вес (кг): ";
+
+    std::string input;
+    std::cin >> input;
+    if (input.find('.') != std::string::npos) {
+        updated.weight.d = std::stod(input);
+        updated.isDouble = true;
+    } else {
+        updated.weight.i = std::stoi(input);
+        updated.isDouble = false;
+    }
+
+    file.seekp((n - 1) * sizeof(sportsman), std::ios::beg);
+    if (!file) {
+        std::cout << "Ошибка перемещения указателя файла.\n";
+        file.close();
+        return;
+    }
+
+    file.write(reinterpret_cast<const char*>(&updated), sizeof(sportsman));
+    if (!file) {
+        std::cout << "Ошибка записи в файл.\n";
+    } else {
+        std::cout << "Структура №" << n << " успешно обновлена.\n";
+    }
+
+    file.close();
+}
+
+void viewFile(const char* filename) {
+    std::ifstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cout << "Ошибка открытия файла.\n";
+        return;
+    }
+
+    sportsman s;
+    int i = 1;
+    while (file.read(reinterpret_cast<char*>(&s), sizeof(s))) {
+        std::cout << "Структура #" << i++ << ":\n";
+        std::cout << "Страна: " << s.country << "\n"
+                  << "Команда: " << s.team << "\n"
+                  << "Имя: " << s.name << "\n"
+                  << "Номер: " << s.number << "\n"
+                  << "Возраст: " << s.age << "\n"
+                  << "Рост: " << s.height << "\n"
+                  << "Вес: " << (s.isDouble ? s.weight.d : s.weight.i) << "\n\n";
+    }
+
+    file.close();
+}
+
+void deleteFile(const char* file) {
+    int n;
+    std::cout << "Введите игровой номер спортсмена для удаления: ";
+    std::cin >> n;
+
+    std::ifstream inFile(file, std::ios::binary | std::ios::in);
+    if (!inFile) {
+        std::cout << "Ошибка открытия файла для чтения.\n";
+        return;
+    }
+
+    inFile.seekg(0, std::ios::end);
+    size_t fileSize = inFile.tellg();
+    size_t recordCount = fileSize / sizeof(sportsman);
+
+    if (recordCount == 0) {
+        std::cout << "Файл пуст.\n";
+        return;
+    }
+
+    inFile.seekg(0, std::ios::beg);
+    sportsman* array = new sportsman[recordCount];
+    inFile.read(reinterpret_cast<char*>(array), fileSize);
+    inFile.close();
+
+    size_t newRecordCount = recordCount;
+    bool found = false;
+    for (size_t i = 0; i < recordCount; ++i) {
+        if (array[i].number == n) {
+            found = true;
+            --newRecordCount;
+            for (size_t j = i; j < recordCount - 1; ++j) {
+                array[j] = array[j + 1];
+            }
+            break;
+        }
+    }
+
+    if (!found) {
+        std::cout << "Запись с номером " << n << " не найдена.\n";
+        delete[] array;
+        return;
+    }
+
+    std::ofstream outFile(file, std::ios::binary | std::ios::out | std::ios::trunc);
+    if (!outFile) {
+        std::cout << "Ошибка открытия файла для записи.\n";
+        delete[] array;
+        return;
+    }
+
+    outFile.write(reinterpret_cast<const char*>(array), newRecordCount * sizeof(sportsman));
+    outFile.close();
+
+    delete[] array;
+
+    std::cout << "Запись успешно удалена.\n";
+}
+
+void addFile(const char* file) {
+    std::ofstream outFile(file, std::ios::binary | std::ios::app);
+    if (!outFile) {
+        std::cout << "Ошибка открытия файла для добавления.\n";
+        return;
+    }
+
+    sportsman s{};
+    std::cout << "Введите страну: ";
+    std::cin >> s.country;
+    std::cout << "Введите команду: ";
+    std::cin >> s.team;
+    std::cout << "Введите имя: ";
+    std::cin.ignore(10000, '\n');
+    std::cin.getline(s.name, sizeof(s.name));
+    std::cout << "Введите номер: ";
+    std::cin >> s.number;
+    std::cout << "Введите возраст: ";
+    std::cin >> s.age;
+    std::cout << "Введите рост (см): ";
+    std::cin >> s.height;
+    std::cout << "Введите вес (кг): ";
+
+    std::string input;
+    std::cin >> input;
+
+    if (input.find('.') != std::string::npos) {
+        s.weight.d = std::stod(input);
+        s.isDouble = true;
+    } else {
+        s.weight.i = std::stoi(input);
+        s.isDouble = false;
+    }
+
+    outFile.write(reinterpret_cast<const char*>(&s), sizeof(sportsman));
+    if (outFile) {
+        std::cout << "Структура успешно добавлена в файл.\n";
+    } else {
+        std::cout << "Ошибка записи в файл.\n";
+    }
 }

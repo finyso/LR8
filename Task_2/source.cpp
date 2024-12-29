@@ -6,10 +6,10 @@
 #include "struc.h"
 
 void menu() {
-    std::cout << "--------------------------\n";
+    std::cout << std::string(50, '-') << '\n';
     std::cout << "Информация о сотрудниках\n";
     std::cout << "Выполнил: Финский Павел Владимирович, гр.453502\n";
-    std::cout << "--------------------------\n";
+    std::cout << std::string(50, '-') << '\n';
 }
 
 char chinazes() {
@@ -28,6 +28,7 @@ char chinazes() {
 }
 
 void action() {
+    std::cout << std::string(50, '-') << '\n';
     std::cout << "Меню:\n";
     std::cout << "1. Добавить сотрудника\n";
     std::cout << "2. Просмотреть сотрудников\n";
@@ -36,6 +37,7 @@ void action() {
     std::cout << "5. Сортировать сотрудников по отделам в порядке убывания стажа\n";
     std::cout << "6. Сохранить в текстовый файл\n";
     std::cout << "7. Выйти\n";
+    std::cout << std::string(50, '-') << '\n';
     std::cout << "Ваш выбор: ";
 }
 
